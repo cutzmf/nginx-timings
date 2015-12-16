@@ -26,7 +26,7 @@ local function minmax( T )
     return min, max
 end
 
-function log_inc(_key)
+function log_inc(ngx_shared_dict, _key)
     local newval, err = ngx_shared_dict:incr(_key, 1)
     if not newval and err == "not found" then
 	ngx_shared_dict:add(_key, 0)
@@ -39,11 +39,11 @@ function log(ngx_shared_dict, key, trim)
     local rq_time = round(ngx.now() - ngx.req.start_time(), trim)
     if not (key == nil or key == '') then key=key..":" end
 
-    log_inc(key.."ngx_status:"..ngx.status)
+    log_inc(ngx_shared_dict, key.."ngx_status:"..ngx.status)
     if ngx.status == ngx.HTTP_OK then
-	log_inc(key.."ngx_req_time:"..rq_time)
+	log_inc(ngx_shared_dict, key.."ngx_req_time:"..rq_time)
 
-	log_inc(key.."last_500_counter")
+	log_inc(ngx_shared_dict, key.."last_500_counter")
 	local last_500_counter = ngx_shared_dict:get(key.."last_500_counter")
 	if last_500_counter == 500 then
 	    ngx_shared_dict:set(key.."last_500_counter", 1)

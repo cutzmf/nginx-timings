@@ -53,7 +53,7 @@ function log(ngx_shared_dict, key, trim)
 end
 
 function printall(ngx_shared_dict)
-    for _,v in pairs(ngx_shared_dict:get_keys()) do
+    for _,v in pairs(ngx_shared_dict:get_keys(0)) do
 	ngx.say(v, " ", ngx_shared_dict:get(v))
     end
 end
@@ -68,7 +68,7 @@ local function time_buckets(ngx_shared_dict, key)
 	_match=key..":([%a_]+):([%d.]+)"
     end
 
-    for _,v in pairs(ngx_shared_dict:get_keys()) do
+    for _,v in pairs(ngx_shared_dict:get_keys(0)) do
 	ngx_,time = v:match(_match)
 
 	if ngx_ == "ngx_req_time" then
@@ -93,7 +93,7 @@ local function last_500_buckets(ngx_shared_dict, key)
 	_match=key..":(last_500):([%d]+)"
     end
 
-    for _,v in pairs(ngx_shared_dict:get_keys()) do
+    for _,v in pairs(ngx_shared_dict:get_keys(0)) do
 	ngx_, counter = v:match(_match)
 
 	if ngx_ == "last_500" then
